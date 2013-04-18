@@ -24,41 +24,62 @@ io.sockets.on('connection', function(socket){
   	console.log(data);
   });
 
-  
-  
-function hosts() {
-	var url = ['hitobank.herokuapp.com', 'hitobank-test.herokuapp.com']
-  return url
-}
 
-var myHosts = {
-  url: function(counter) {
-		return hosts()[counter];
-  },
-  lengthHosts: function() {
-    return hosts().length
-  }  
-}
 
-function test(url) {  
-  for(var i = 0; i < myHosts.lengthHosts(); i++) {
-    (function(i) {
-		    http.get('http://' + myHosts.url(i), function(res) {
-      			console.log('==========================================')
-            console.log('sending request to.. ' + myHosts.url(i))
-            console.log('status code: ' + res.statusCode);
-    				console.log('headers:' + JSON.stringify(res.headers))
-        		header = JSON.stringify(res.headers)
-						console.log('==========================================')
-					}).on('error', function(e) {
-						console.log(e.message)
-				})
-    })(i)
-  }  
-	var timer = setTimeout(test, delay)
-	counter++
-	console.log(counter)
-} 
+    app.get('http://' + myHosts.url(i), function(res) {
+        console.log('==========================================');
+        console.log('sending request to.. ' + myHosts.url(i));
+        console.log('status code: ' + res.statusCode);
+        console.log('headers:' + JSON.stringify(res.headers));
+        header = JSON.stringify(res.headers);
+        console.log('==========================================')
+      }).on('error', function(e) {
+            console.log(e.message)
+    })
+
+
+
+
+
+
+
+
+
+
+
+//function hosts() {
+//	var url = ['hitobank.herokuapp.com', 'hitobank-test.herokuapp.com']
+//  return url
+//}
+//
+//var myHosts = {
+//  url: function(counter) {
+//		return hosts()[counter];
+//  },
+//  lengthHosts: function() {
+//    return hosts().length
+//  }
+//}
+//
+//function test(url) {
+//  for(var i = 0; i < myHosts.lengthHosts(); i++) {
+//    (function(i) {
+//		    http.get('http://' + myHosts.url(i), function(res) {
+//      			console.log('==========================================')
+//            console.log('sending request to.. ' + myHosts.url(i))
+//            console.log('status code: ' + res.statusCode);
+//    				console.log('headers:' + JSON.stringify(res.headers))
+//        		header = JSON.stringify(res.headers)
+//						console.log('==========================================')
+//					}).on('error', function(e) {
+//						console.log(e.message)
+//				})
+//    })(i)
+//  }
+//	var timer = setTimeout(test, delay)
+//	counter++
+//	console.log(counter)
+//}
   
 
   
