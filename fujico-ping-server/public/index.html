@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="bootstrap/css/jp_styles.css" rel="stylesheet" media="screen">
+		</head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+
+                <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <!-- Be sure to leave the brand out there if you want it shown -->
+                <a class="brand" href="#">Project name</a>
+
+                <!-- Everything you want hidden at 940px or less, place within here -->
+                <div class="nav-collapse collapse">
+                    <!-- .nav, .navbar-search, .navbar-form, etc -->
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2">
+
+            </div>
+            <div class="span10">
+                <!-- Add your site or application content here -->
+                <p>Hello world! This is HTML5 Boilerplate.</p>
+                <p class="news"></p>
+
+
+                <ul class="nav nav-tabs nav-stacked myHosts span5">
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+        <script src="socket.io/socket.io.js"></script>
+        <script>
+          $(document).ready(function() {
+            //var socket = io.connect('http://jp-fujico-dev-5007.apse1.actionbox.io:8888');\
+              var socket = io.connect('http://localhost:8888')
+              socket.emit('connection');
+
+              socket.on('server_message', function(data) {
+                  //$('.news').html(data);
+//                  console.log(data)
+              })
+
+              socket.on('server_msg', function(data) {
+                  console.log(data.data)
+                  var myHost = $('.myHosts');
+                  myHost.remove();
+                  myHost.append('<li>' + data.data +'</li>').addClass('border-radius').trigger('create');
+              })
+          });
+	      </script>
+           
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+
+    </body>
+</html>
+
+
