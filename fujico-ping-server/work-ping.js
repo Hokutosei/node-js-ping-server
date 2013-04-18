@@ -26,7 +26,7 @@ io.sockets.on('connection', function(socket){
 
 
 
-    app.get('http://' + myHosts.url(i), function(res) {
+    app.get('http://apple.com', function(res) {
         console.log('==========================================');
         console.log('sending request to.. ' + myHosts.url(i));
         console.log('status code: ' + res.statusCode);
