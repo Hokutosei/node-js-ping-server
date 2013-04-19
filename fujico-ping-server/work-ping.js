@@ -38,38 +38,52 @@ var myHostsOptions = {
         return myHosts().length
     },
     delay: function() {
-        return delay = 2000;
+        return delay = 28000;
     }
 }
 
 var x;
 io.sockets.on('connection', function(socket) {
         socket.emit('server_message', {msg: x})
+        socket.on('host_lists', function(){
+          socket.emit('server_hosts_list', { hosts: myHosts() })
+        })
 });
 
-var dataArray = [];
+var dataArray = [], counter = 0;
 
-for(var i = 0; i < myHostsOptions.hostsLength(); i++) {
-    (function(i) {
-        dataArray.length = 0;
-        setTimeout(makeRequest, myHostsOptions.delay());
-        function makeRequest() {
-            http.get('http://' + myHostsOptions.url(i), function(res) {
-                console.log('==========================================');
-                console.log('sending request to.. ' + myHostsOptions.url(i));
-//                console.log('status code: ' + res.statusCode);
-//                console.log('headers:' + JSON.stringify(res.headers))
-//                header = JSON.stringify(res.headers)
-//                console.log('==========================================')
-//                x = myHostsOptions.url(i);
-//                io.sockets.emit('server_msg', { host: myHostsOptions.url(i) });
-            });
-            setTimeout(makeRequest, myHostsOptions.delay());
-            dataArray.push(myHostsOptions.url(i));
-            io.sockets.emit('server_msg', { host: myHostsOptions.url(i), data: dataArray });
-        }
-    })(i);
-}
+(function() {
+  for(var i = 0; i < myHostsOptions.hostsLength(); i++) {
+      (function(i) {
+          dataArray.length = 0;
+          setTimeout(makeRequest, myHostsOptions.delay());
+          function makeRequest() {
+              http.get('http://' + myHostsOptions.url(i), function(res) {
+                  console.log('==========================================');
+                  console.log('sending request to.. ' + myHostsOptions.url(i));
+  //                console.log('status code: ' + res.statusCode);
+  //                console.log('headers:' + JSON.stringify(res.headers))
+  //                header = JSON.stringify(res.headers)
+  //                console.log('==========================================')
+  //                x = myHostsOptions.url(i);
+  //                io.sockets.emit('server_msg', { host: myHostsOptions.url(i) });
+                  io.sockets.emit('server_msg', { 
+                    host: myHostsOptions.url(i), 
+                    counter: counter,
+                    headers: JSON.stringify(res.headers)
+                  });
+
+              });
+              counter++;
+              setTimeout(makeRequest, myHostsOptions.delay());
+              //dataArray.push(myHostsOptions.url(i));
+          }
+  //				io.sockets.emit('server_msg', { host: myHostsOptions.url(i), counter: counter });
+      })(i);
+  }
+})();
+
+
 
 server.listen(port);
 
