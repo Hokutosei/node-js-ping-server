@@ -10,9 +10,11 @@ var express = require('express'),
 
 var port = 8888, localhost = '0.0.0.0';
 var loop_delay = 28000;
+var serverStartTime = new Date().toLocaleString();
 
 //mongoose.connect('mongodb://jeanepaul:jinpol@ds053937.mongolab.com:53937/jeanepaul-networking');
-mongoose.connect('mongodb://jeanepaul:jinpol@dharma.mongohq.com:10056/jeanepaul-networking');
+//mongoose.connect('mongodb://jeanepaul:jinpol@dharma.mongohq.com:10056/jeanepaul-networking');
+mongoose.connect('mongodb://jeanepaul:jinpol@ds033757.mongolab.com:33757/jeanepaul-networking-2');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
 
@@ -76,7 +78,7 @@ var x;
 io.sockets.on('connection', function(socket) {
         socket.emit('server_message', {msg: x});
         socket.on('host_lists', function(){
-          socket.emit('server_hosts_list', { hosts: myHosts() })
+          socket.emit('server_hosts_list', { hosts: myHosts(), serverStartTime: serverStartTime })
         })
 });
 
@@ -88,7 +90,7 @@ io.sockets.on('connection', function(socket) {
             for (var i = 0; i < host.length; i++) {
                 hostList.push(host[i])
             }
-            socket.emit('serverList', {data: hostList})
+            socket.emit('serverList', {data: hostList, serverStartTime: serverStartTime})
         })
     });
 

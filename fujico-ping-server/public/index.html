@@ -28,7 +28,7 @@
                     <span class="icon-bar"></span>
                 </a>
 	              <a class="brand" href="#">Fujico Network Monitor</a>
-	              <h4 class="header_ping_counter"></h4>
+	              <h4 class="header_ping_counter"></h4><span>Server Started: {{serverStartTime}}</span>
                 <!-- Everything you want hidden at 940px or less, place within here -->
                 <div class="nav-collapse collapse">
                 </div>
@@ -49,6 +49,21 @@
                             {{data.name}}
                         </div>
                         <ul>
+                            <li>
+                                {{data.responses[0].counter}}
+                            </li>
+                            <li>
+                                {{data.responses[0].statusCode}}
+                            </li>
+                            <li>
+                                {{data.responses[0].responseTime}}
+                            </li>
+                            <li>
+                                {{data.responses[0].scriptRunTime}}
+                            </li>
+                            <li>
+                                {{data.responses[0].created_at}}
+                            </li>
                         </ul>
 
                     </li>

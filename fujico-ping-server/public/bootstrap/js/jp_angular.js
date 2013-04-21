@@ -36,21 +36,27 @@ app.controller('AppCtrl', function($scope, socket) {
             dataArray.push(hostData.data[i])
         }
         //console.log(dataArray);
-        console.log(dataArray)
+        console.log(dataArray);
         $scope.hostData = dataArray;
+        $scope.serverStartTime = hostData.serverStartTime;
     });
 
-//    socket.emit('host_lists');
-//    socket.on('server_hosts_list', function(data) {
-//        $scope.hosts = data.hosts;
-//    });
-
     socket.on('send:toSockets', function(data) {
-        //console.log(data)
-        var server = data.serverData['host'];
-        console.log(dataArray['name'][server]);
-        //console.log(server)
-    })
+        $.each(data, function(key, value) {
+            var hostName = value['host'];
+            console.log(hostName);
+            $.each(dataArray, function(key, value) {
+                if (value['name'] == hostName) {
+                    if(value['responses'].length > 1) { value['responses'] = [] }
+                    value['responses'].push(data.serverData)
+                }
+            })
+
+        });
+        console.log(dataArray);
+        $scope.hostData = dataArray;
+
+    });
 
     socket.on('server_msg', function(data) {
         $scope.counter = 'Get: ' + data.counter + ' requests';
