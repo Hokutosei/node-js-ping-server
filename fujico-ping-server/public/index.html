@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html ng-app="lxJpNetworking">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -11,9 +8,12 @@
         <meta name="viewport" content="width=device-width">
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
-        <link href="bootstrap/css/jp_styles.css" rel="stylesheet" media="screen">
+        <link href="bootstrap/css/jp_styles.less" rel="stylesheet/less" type="text/css" media="screen">
+
+        <script src="bootstrap/js/less-1.3.3.min.js"></script>
+
 		</head>
-    <body>
+    <body ng-controller="AppCtrl">
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
@@ -21,20 +21,16 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-
                 <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
                 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-
-                <!-- Be sure to leave the brand out there if you want it shown -->
 	              <a class="brand" href="#">Fujico Network Monitor</a>
 	              <h4 class="header_ping_counter"></h4>
                 <!-- Everything you want hidden at 940px or less, place within here -->
                 <div class="nav-collapse collapse">
-                    <!-- .nav, .navbar-search, .navbar-form, etc -->
                 </div>
 
             </div>
@@ -45,8 +41,18 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span3">
-              <ul class="host_lists nav nav-tabs nav-stacked ">
-              </ul>  
+                <input type="text" ng-model="test_input">{{test_input}}
+
+                <ul class="host_lists nav nav-stacked" ng-repeat="data in hostData">
+                    <li class="host-box">
+                        <div class="host-list-header">
+                            {{data.name}}
+                        </div>
+                        <ul>
+                        </ul>
+
+                    </li>
+                </ul>
 
             </div>
             <div class="span9">
@@ -54,11 +60,8 @@
               <h4 class="ping_counter"></h4>
               	<p class="news"></p>
 
-
                 <ul class="nav nav-tabs nav-stacked myHosts span9">
-
                 </ul>
-
             </div>
         </div>
     </div>
@@ -67,35 +70,12 @@
 
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
         <script src="socket.io/socket.io.js"></script>
+        <script src="bootstrap/js/angular.min.js"></script>
+
+        <script src="bootstrap/js/jp_scripts.js"></script>
+        <script src="bootstrap/js/jp_angular.js"></script>
         <script>
-          $(document).ready(function() {
-            	var socket = io.connect('http://jp-fujico-dev-5007.apse1.actionbox.io:8888');
-              //var socket = io.connect('http://localhost:8888')
-              socket.emit('connection');
-            
-            	socket.emit('host_lists');
-            	socket.on('server_hosts_list', function(data) {
-								console.log(data)
-                $.each(data.hosts, function(k,v) {
-                  $('.host_lists').append('<li>' + v + '</li>')
-                })
-	            })
-
-              socket.on('server_message', function(data) {
-                  //$('.news').html(data);
-//                  console.log(data)
-              })
-
-              socket.on('server_msg', function(data) {
-									console.log(data.counter)
-                  var myHost = $('.myHosts');
-                	$('.header_ping_counter').html(data.counter + ' ping')
-									$('title').text('(' + data.counter + ')' + ' jp-fujico-dev-5007')
-                  myHost.prepend('<li>' + data.headers +'</li>');
-              })
-          });
 	      </script>
            
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

@@ -4,22 +4,52 @@ var express = require('express'),
     fs = require('fs'),
     http = require('http'),
     server = http.createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server)
+    mongoose = require('mongoose');
+
 
 var port = 8888, localhost = '0.0.0.0';
+var loop_delay = 28000;
 
-//app.listen(port, localhost);
+//mongoose.connect('mongodb://jeanepaul:jinpol@ds053937.mongolab.com:53937/jeanepaul-networking');
+mongoose.connect('mongodb://jeanepaul:jinpol@dharma.mongohq.com:10056/jeanepaul-networking');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
 
-function handler(req, res) {
-  fs.readFile(__dirname + '/index.html', function(err, data) {
-    if (err) {
-    	res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  })
-}
+// MY schema
+var testDataSchema = new mongoose.Schema({
+    host: String,
+    counter: String,
+    headers: String,
+    statusCode: String,
+    responseTime: String,
+    scriptRunTime: String
+});
+
+var connectionResponseSchema = new mongoose.Schema({
+    host: String,
+    counter: String,
+    headers: String,
+    statusCode: String,
+    responseTime: String,
+    scriptRunTime: String,
+    created_at: String
+});
+
+var hostSchema = new mongoose.Schema({
+    name: String,
+    url:String,
+    created_at: String,
+    responses: [connectionResponseSchema]
+});
+
+var ConnectionResponse = mongoose.model('ConnectionResponse', connectionResponseSchema);
+var Host = mongoose.model('Host', hostSchema);
+
+var TestData = mongoose.model('TestData', testDataSchema);
+
+
+
 
 app.get(/^(.+)$/, function(req, res) {
     res.sendfile('public/' + req.params[0]);
@@ -40,54 +70,96 @@ var myHostsOptions = {
     delay: function() {
         return delay = 28000;
     }
-}
+};
 
 var x;
 io.sockets.on('connection', function(socket) {
-        socket.emit('server_message', {msg: x})
+        socket.emit('server_message', {msg: x});
         socket.on('host_lists', function(){
           socket.emit('server_hosts_list', { hosts: myHosts() })
         })
 });
 
-var dataArray = [], counter = 0;
 
 (function() {
-  for(var i = 0; i < myHostsOptions.hostsLength(); i++) {
-      (function(i) {
-          dataArray.length = 0;
-          setTimeout(makeRequest, myHostsOptions.delay());
-          function makeRequest() {
-              http.get('http://' + myHostsOptions.url(i), function(res) {
-                  console.log('==========================================');
-                  console.log('sending request to.. ' + myHostsOptions.url(i));
-  //                console.log('status code: ' + res.statusCode);
-  //                console.log('headers:' + JSON.stringify(res.headers))
-  //                header = JSON.stringify(res.headers)
-  //                console.log('==========================================')
-  //                x = myHostsOptions.url(i);
-  //                io.sockets.emit('server_msg', { host: myHostsOptions.url(i) });
-                  io.sockets.emit('server_msg', { 
-                    host: myHostsOptions.url(i), 
-                    counter: counter,
-                    headers: JSON.stringify(res.headers)
-                  });
+    io.sockets.on('connection', function(socket) {
+        var hostList = [];
+        Host.find(function(err, host) {
+            for (var i = 0; i < host.length; i++) {
+                hostList.push(host[i])
+            }
+            socket.emit('serverList', {data: hostList})
+        })
+    });
 
-              });
-              counter++;
-              setTimeout(makeRequest, myHostsOptions.delay());
-              //dataArray.push(myHostsOptions.url(i));
-          }
-  //				io.sockets.emit('server_msg', { host: myHostsOptions.url(i), counter: counter });
-      })(i);
-  }
+
+
+    console.log('called');
+    var dataArray = [];
+    var requestCounter = 0;
+    initializeHosts();
+    function initializeHosts() {
+        Host.find(function(err, host) {
+            for(var i = 0; i < host.length; i++) {
+                if (dataArray.length > host.length -1) { dataArray = [] }
+                dataArray.push(host[i])
+            }
+            getRequest()
+        });
+    }
+
+    function getRequest() {
+        for (var i = 0; i < dataArray.length; i++) {
+            var myHost = dataArray[i]['name'];
+            (function(myHost) {
+                var startTime = new Date();
+                http.get('http://' + myHost, function(res) {
+                    var data = {
+                        host: myHost,
+                        counter: requestCounter,
+                        headers: JSON.stringify(res.headers),
+                        statusCode: res.statusCode,
+                        responseTime: new Date() - startTime + 'ms',
+                        scriptRunTime: res.headers['x-runtime'] + 'ms',
+                        created_at: new Date()
+                    };
+                    insertDataToHost(data);
+                    pushDataToSockets(data)
+                });
+            })(myHost);
+            requestCounter++;
+            console.log(requestCounter)
+        }
+
+        setTimeout(initializeHosts, loop_delay)
+    }
+
+    function insertDataToHost(data) {
+        var dataArray = []
+        var myHost = data['host'];
+        Host.update({'name' : myHost}, {$push: {responses: data }}, function(err, host){
+            if (err) { console.log('Cannot save.. ' + myHost) }
+            else { console.log('saved!') }
+        })
+    }
+
+    function pushDataToSockets(data) {
+        var dataForEmit = [];
+        var myHost = data['host'];
+        Host.find({name : myHost}, function(err, result) {
+            //console.log(result[0]['responses'].length)
+            var responseLength = result[0]['responses'].length
+//            console.log(result[0]['responses'][parseInt(responseLength) -1])
+//            dataForEmit.push(result[0]['responses'][parseInt(responseLength) -1])
+            var data = result[0]['responses'][parseInt(responseLength) -1];
+            io.sockets.emit('send:toSockets', { serverData: data })
+        })
+    }
+
 })();
-
-
-
 server.listen(port);
 
-console.log('Server is running at ' + localhost + '...' + port)
+console.log('Server is running at ' + localhost + '...' + port);
 
 
 
