@@ -28,6 +28,7 @@ app.factory('socket', function($rootScope) {
 
 app.controller('AppCtrl', function($scope, socket) {
     var dataArray = [];
+    $scope.hostData;
 
     socket.emit('connection');
     socket.on('serverList', function(hostData) {
@@ -44,18 +45,22 @@ app.controller('AppCtrl', function($scope, socket) {
     socket.on('send:toSockets', function(data) {
         $.each(data, function(key, value) {
             var hostName = value['host'];
-            console.log(hostName);
             $.each(dataArray, function(key, value) {
                 if (value['name'] == hostName) {
-                    if(value['responses'].length > 1) { value['responses'] = [] }
-                    value['responses'].push(data.serverData)
+                    if(value['responses'].length >= 1) { value['responses'] = [] }
+                    value['responses'].push(data.serverData);
+                    var responseTime = value['responses'][0]['responseTime'].replace('ms', '')
+                    console.log(responseTime);
+                    var host = $scope.formatClassName('.' + hostName + '_chart');
+                    $(host).easyPieChart({
+                        animate: 1000,
+                        barColor: '#0099CC',
+                        lineWidth: 4
+                    }).data('easyPieChart').update($scope.calculateDataToPercent(responseTime))
                 }
             })
-
         });
         console.log(dataArray);
-        $scope.hostData = dataArray;
-
     });
 
     socket.on('server_msg', function(data) {
@@ -74,6 +79,16 @@ app.controller('AppCtrl', function($scope, socket) {
 //        };
 
     });
+
+
+    $scope.calculateDataToPercent = function(data) {
+        return (data.replace('ms', '') / 1000) * 100;
+    }
+
+    $scope.formatClassName = function(data) {
+        return data.replace('.herokuapp.com', '');
+    }
+
 });
 
 

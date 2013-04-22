@@ -9,6 +9,7 @@
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
         <link href="bootstrap/css/jp_styles.less" rel="stylesheet/less" type="text/css" media="screen">
+        <link href="bootstrap/css/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen">
 
         <script src="bootstrap/js/less-1.3.3.min.js"></script>
 
@@ -74,8 +75,16 @@
                 <!-- Add your site or application content here -->
               <h4 class="ping_counter"></h4>
               	<p class="news"></p>
+                <div class="chart1" data-percent="{{testValueChart}}">{{testValueChart}}%</div>
 
-                <ul class="nav nav-tabs nav-stacked myHosts span9">
+                <ul class="nav nav-tabs nav-stacked myHosts span9" >
+                    <li ng-repeat="data in hostData">
+                        <div class="{{formatClassName(data.name)}}_chart" id="{{data.name}}" data-percent="{{calculateDataToPercent(data.responses[0].responseTime)}}">
+                            {{data.responses[0].responseTime}}
+
+                        </div>
+                        <p>{{data.name}}</p>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -90,6 +99,7 @@
 
         <script src="bootstrap/js/jp_scripts.js"></script>
         <script src="bootstrap/js/jp_angular.js"></script>
+        <script src="bootstrap/js/jquery.easy-pie-chart.js"></script>
         <script>
 	      </script>
            
