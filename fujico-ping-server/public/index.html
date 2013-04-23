@@ -42,7 +42,9 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span3">
-                <input type="text" ng-model="test_input">{{test_input}}
+                <div class="url_input_area">
+                    <input type="text" ng-model="hostUrl" class="url_input"> {{test_input}} <button class="btn" ng-click="createNewHost()">Submit</button>
+                </div>
 
                 <ul class="host_lists nav nav-stacked" ng-repeat="data in hostData">
                     <li class="host-box">

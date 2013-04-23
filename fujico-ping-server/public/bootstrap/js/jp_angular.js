@@ -3,15 +3,16 @@
 var app = angular.module("lxJpNetworking", []);
 
 app.factory('socket', function($rootScope) {
-    var socket = io.connect('http://0.0.0.0:8888');
+    //var socket = io.connect('http://localhost:8888');
+    var socket = io.connect();
     return {
         on: function (eventName, callback) {
             socket.on(eventName, function() {
                 var args = arguments;
                 $rootScope.$apply(function () {
                     callback.apply(socket, args)
-                })
-            })
+                });
+            });
         },
         emit: function(eventName, data, callback) {
             socket.emit(eventName, data, function() {
@@ -23,7 +24,7 @@ app.factory('socket', function($rootScope) {
                 });
             })
         }
-    }
+    };
 });
 
 app.controller('AppCtrl', function($scope, socket) {
@@ -49,7 +50,7 @@ app.controller('AppCtrl', function($scope, socket) {
                 if (value['name'] == hostName) {
                     if(value['responses'].length >= 1) { value['responses'] = [] }
                     value['responses'].push(data.serverData);
-                    var responseTime = value['responses'][0]['responseTime'].replace('ms', '')
+                    var responseTime = value['responses'][0]['responseTime'].replace('ms', '');
                     console.log(responseTime);
                     var host = $scope.formatClassName('.' + hostName + '_chart');
                     $(host).easyPieChart({
@@ -63,31 +64,29 @@ app.controller('AppCtrl', function($scope, socket) {
         console.log(dataArray);
     });
 
-    socket.on('server_msg', function(data) {
-        $scope.counter = 'Get: ' + data.counter + ' requests';
-        $scope.statusCode = 'StatusCode: ' + data.statusCode;
-        $scope.scriptRunTime = 'ScriptRunTime: ' + data.scriptRunTime;
-        $scope.responseTime = 'ResponseTime: ' + data.responseTime;
-        $scope.serverHostDataMessages = data.data;
-//        var data = {
-//            host: myHostsOptions.url(i),
-//            counter: requestCounter,
-//            headers: JSON.stringify(res.headers),
-//            statusCode: res.statusCode,
-//            responseTime: new Date() - startTime,
-//            scriptRunTime: res.headers['x-runtime']
-//        };
+    $scope.createNewHost = function() {
+        var data = $scope.hostUrl;
+        console.log('outer data' + data);
+        sendData(data)
+    };
 
-    });
+    function sendData(data) {
+        socket.emit('client:createNewHost', { name: data, url: 'http://' + data }, function(err, host) {
+            if (err) { console.log('not save' + err) }
+            else { console.log('saved ' + host)}
+        });
+        console.log('this data' + data);
+
+    }
+
 
 
     $scope.calculateDataToPercent = function(data) {
         return (data.replace('ms', '') / 1000) * 100;
-    }
-
+    };
     $scope.formatClassName = function(data) {
-        return data.replace('.herokuapp.com', '');
-    }
+        return data.replace('.herokuapp.com', '').replace('.com', '');
+    };
 
 });
 

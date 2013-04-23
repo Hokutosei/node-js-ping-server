@@ -38,7 +38,7 @@ var connectionResponseSchema = new mongoose.Schema({
 
 var hostSchema = new mongoose.Schema({
     name: String,
-    url:String,
+    url: String,
     created_at: String,
     responses: [connectionResponseSchema]
 });
@@ -58,13 +58,21 @@ app.get(/^(.+)$/, function(req, res) {
 
 
 (function() {
+
     io.sockets.on('connection', function(socket) {
         var hostList = [];
-        Host.find({}, {resposnes: 0}, function(err, host) {
+        Host.find({}, {}, function(err, host) {
             for (var i = 0; i < host.length; i++) {
                 hostList.push(host[i])
             }
             socket.emit('serverList', {data: hostList, serverStartTime: serverStartTime})
+        });
+        socket.on('client:createNewHost', function(data) {
+            var host = new Host({ name: data.name, url: data.url });
+            host.save(function(err, host) {
+                if (err) { console.log('host could not be saved..') }
+                else { console.log('host ' + data.name + ' has been saved!') }
+            })
         })
     });
 
@@ -75,23 +83,28 @@ app.get(/^(.+)$/, function(req, res) {
     var requestCounter = 0;
     initializeHosts();
     function initializeHosts() {
-        Host.find({}, {responses:0}, function(err, host) {
-            for(var i = 0; i < host.length; i++) {
-                if (dataArray.length > host.length -1) { dataArray = [] }
-                dataArray.push(host[i])
+        Host.find(function(err, host) {
+            //if (dataArray.length > host.length) { dataArray = [] }
+            if (dataArray.length != 0) {
+                dataArray = []
+                initializeHosts()
+            } else {
+                for(var i = 0; i < host.length; i++) {
+                    dataArray.push(host[i])
+                }
+                getRequest();
             }
-            getRequest()
         });
     }
 
     function getRequest() {
         for (var i = 0; i < dataArray.length; i++) {
-            var myHost = dataArray[i]['name'];
-            (function(myHost) {
+            var myHost = dataArray[i]['url'], name = dataArray[i]['name'];
+            (function(myHost, name) {
                 var startTime = new Date();
-                http.get('http://' + myHost, function(res) {
+                http.get(myHost, function(res) {
                     var data = {
-                        host: myHost,
+                        host: name,
                         counter: requestCounter,
                         headers: JSON.stringify(res.headers),
                         statusCode: res.statusCode,
@@ -101,7 +114,7 @@ app.get(/^(.+)$/, function(req, res) {
                     };
                     insertDataToHost(data);
                 });
-            })(myHost);
+            })(myHost, name);
             requestCounter++;
             console.log(requestCounter)
         }
@@ -122,7 +135,7 @@ app.get(/^(.+)$/, function(req, res) {
     function pushDataToSockets(data) {
         var myHost = data['host'];
         Host.find({name : myHost}, function(err, result) {
-            var responseLength = result[0]['responses'].length
+            var responseLength = result[0]['responses'].length;
             var data = result[0]['responses'][parseInt(responseLength) -1];
             io.sockets.emit('send:toSockets', { serverData: data })
         })
