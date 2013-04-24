@@ -1,3 +1,6 @@
+@center_latest_item: 10px;
+@center_item_width:260px ;
+
 body {
     margin-top: 60px;
 }
@@ -45,4 +48,34 @@ body {
 
 .url_input_area {
   margin-bottom: 50px;
+}
+
+.main_chart {
+  text-align: center;
+  min-height: 200px;
+}
+
+.production_div, .development_div {
+  text-align: center;
+  min-height: 600px !important;
+}
+
+.production_latest_item, .development_latest_item {
+  border: 1px solid #e3e3e3;
+}
+
+.production_div {
+  border-right: 1px solid #e3e3e3;
+}
+
+.development_div {
+  border-left: 1px solid #e3e3e3;
+}
+.production_latest_item {
+  margin-right: 0px;
+  width: @center_item_width;
+}
+.development_latest_item {
+  margin-left: 70px;
+  width: @center_item_width;
 }

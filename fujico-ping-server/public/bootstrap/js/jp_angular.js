@@ -37,7 +37,6 @@ app.controller('AppCtrl', function($scope, socket) {
             if (dataArray.length > hostData.data.length -1) { dataArray = [] }
             dataArray.push(hostData.data[i])
         }
-        //console.log(dataArray);
         console.log(dataArray);
         $scope.hostData = dataArray;
         $scope.serverStartTime = hostData.serverStartTime;
@@ -51,17 +50,16 @@ app.controller('AppCtrl', function($scope, socket) {
                     if(value['responses'].length >= 1) { value['responses'] = [] }
                     value['responses'].push(data.serverData);
                     var responseTime = value['responses'][0]['responseTime'].replace('ms', '');
-                    console.log(responseTime);
                     var host = $scope.formatClassName('.' + hostName + '_chart');
                     $(host).easyPieChart({
                         animate: 1000,
                         barColor: '#0099CC',
-                        lineWidth: 4
+                        lineWidth: 4,
+                        size: 180
                     }).data('easyPieChart').update($scope.calculateDataToPercent(responseTime))
                 }
             })
         });
-        console.log(dataArray);
     });
 
     $scope.createNewHost = function() {
@@ -75,8 +73,6 @@ app.controller('AppCtrl', function($scope, socket) {
             if (err) { console.log('not save' + err) }
             else { console.log('saved ' + host)}
         });
-        console.log('this data' + data);
-
     }
 
 

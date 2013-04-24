@@ -80,14 +80,29 @@
                 <div class="chart1" data-percent="{{testValueChart}}">{{testValueChart}}%</div>
 
                 <ul class="nav nav-tabs nav-stacked myHosts span9" >
-                    <li ng-repeat="data in hostData">
-                        <div class="{{formatClassName(data.name)}}_chart" id="{{data.name}}" data-percent="{{calculateDataToPercent(data.responses[0].responseTime)}}">
-                            {{data.responses[0].responseTime}}
+                    <div class="row-fluid offset2 main_chart">
+                        <li ng-repeat="data in hostData" class="span5" style="text-align: center">
+                            <div class="{{formatClassName(data.name)}}_chart" id="{{data.name}}" data-percent="{{calculateDataToPercent(data.responses[0].responseTime)}}">
+                                {{data.responses[0].responseTime}}
+                            </div>
+                            <p>{{data.name}}</p>
+                        </li>
 
-                        </div>
-                        <p>{{data.name}}</p>
-                    </li>
+                    </div>
                 </ul>
+                <br style="clear: both">
+                <div class="row-fluid" style="margin-left: 6%">
+                    <div class="span4 production_div">
+                        <div class="production_latest_item">
+                            test
+                        </div>
+                    </div>
+                    <div class="span3 development_div offset1">
+                        <div class="development_latest_item">
+                            test
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

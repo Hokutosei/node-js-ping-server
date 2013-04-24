@@ -114,8 +114,8 @@ app.get(/^(.+)$/, function(req, res) {
                     };
                     insertDataToHost(data);
                 }).on('error', function(e) {
-  									console.log("Got error: " + e.message + name);
-								});
+                    console.log("Got error: " + e.message + name);
+                });
             })(myHost, name);
             requestCounter++;
             console.log(requestCounter)
@@ -129,7 +129,7 @@ app.get(/^(.+)$/, function(req, res) {
         var myHost = data['host'];
         Host.update({'name' : myHost}, {$push: {responses: data }}, function(err, host){
             if (err) { console.log('Cannot save.. ' + myHost) }
-            else { console.log('saved!' + myHost) }
+            else { console.log('saved! ' + myHost ) }
             pushDataToSockets(data)
         })
     }
