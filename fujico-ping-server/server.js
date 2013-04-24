@@ -43,8 +43,15 @@ var hostSchema = new mongoose.Schema({
     responses: [connectionResponseSchema]
 });
 
+var hostTimeLineSchema = new mongoose.Schema({
+    hostName: String,
+    created_at: String,
+    responses: [connectionResponseSchema]
+});
+
 var ConnectionResponse = mongoose.model('ConnectionResponse', connectionResponseSchema);
 var Host = mongoose.model('Host', hostSchema);
+var HostTimeLine = mongoose.model('HostTimeLine', hostTimeLineSchema);
 
 var TestData = mongoose.model('TestData', testDataSchema);
 

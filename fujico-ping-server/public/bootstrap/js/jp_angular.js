@@ -37,35 +37,42 @@ app.controller('AppCtrl', function($scope, socket) {
             if (dataArray.length > hostData.data.length -1) { dataArray = [] }
             dataArray.push(hostData.data[i])
         }
-        console.log(dataArray);
+        //console.log(dataArray);
         $scope.hostData = dataArray;
         $scope.serverStartTime = hostData.serverStartTime;
     });
 
     socket.on('send:toSockets', function(data) {
+        var rawDataArray = [];
         $.each(data, function(key, value) {
             var hostName = value['host'];
             $.each(dataArray, function(key, value) {
                 if (value['name'] == hostName) {
                     if(value['responses'].length >= 1) { value['responses'] = [] }
                     value['responses'].push(data.serverData);
+
                     var responseTime = value['responses'][0]['responseTime'].replace('ms', '');
                     var host = $scope.formatClassName('.' + hostName + '_chart');
-                    $(host).easyPieChart({
-                        animate: 1000,
-                        barColor: '#0099CC',
-                        lineWidth: 4,
-                        size: 180
-                    }).data('easyPieChart').update($scope.calculateDataToPercent(responseTime))
+
+                    $(function() {
+                        $(host).easyPieChart({
+                            animate: 1000,
+                            barColor: $scope.assignColorToStatus(parseInt(responseTime)),
+                            lineWidth: 4,
+                            size: 180
+                        }).data('easyPieChart').update($scope.calculateDataToPercent(responseTime))
+                    });
                 }
             })
         });
+        //console.log(rawDataArray);
+        $scope.rawDataArray = dataArray;
     });
 
     $scope.createNewHost = function() {
         var data = $scope.hostUrl;
-        console.log('outer data' + data);
-        sendData(data)
+        //console.log('outer data' + data);
+        //sendData(data)
     };
 
     function sendData(data) {
@@ -76,6 +83,23 @@ app.controller('AppCtrl', function($scope, socket) {
     }
 
 
+    $scope.assignColorToStatus = function(data) {
+        console.log(data < 550);
+        if (range(data, 100, 550)) {
+            console.log('condition 1');
+            return String('#91e842');
+        } else if (range(data, 551, 750)) {
+            console.log('condition 2');
+            return String('#e6ab82');
+        } else {
+            console.log('condition 3');
+            return String('#d66c51');
+        }
+
+        function range(data, min, max) {
+            return data >= min && data <= max;
+        }
+    };
 
     $scope.calculateDataToPercent = function(data) {
         return (data.replace('ms', '') / 1000) * 100;
