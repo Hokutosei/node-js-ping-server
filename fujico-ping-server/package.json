@@ -1,0 +1,9 @@
+{
+  'name':	'jp-networking-monitor',
+  'version': '0.0.1',
+  'engines': {
+    'node':	'v0.8.11',
+    'npm':	'1.1.62'
+  					}
+
+}
