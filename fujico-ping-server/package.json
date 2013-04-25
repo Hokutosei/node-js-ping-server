@@ -4,6 +4,10 @@
   'engines': {
     'node':	'0.8.11',
     'npm':	'1.1.62'
-  					}
+  					},
+  'dependencies':	{
+    'express' : '~2.x',
+    'socket.io': '~0.9.x'
+  }
 
 }
