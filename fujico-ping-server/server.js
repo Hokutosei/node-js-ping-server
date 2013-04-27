@@ -12,7 +12,8 @@ var port = 8888, localhost = '0.0.0.0';
 var loop_delay = 28000;
 var serverStartTime = new Date().toLocaleString();
 
-mongoose.connect('mongodb://jeanepaul:jinpol@ds033757.mongolab.com:33757/jeanepaul-networking-2');
+//mongoose.connect('mongodb://jeanepaul:jinpol@ds033757.mongolab.com:33757/jeanepaul-networking-2');
+mongoose.connect('mongodb://jeanepaul:jinpol@dharma.mongohq.com:10058/jeanepaul-networking-2');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
 

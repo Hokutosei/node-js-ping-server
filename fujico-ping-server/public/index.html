@@ -41,39 +41,7 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span3">
-                <div class="url_input_area" style="display: none">
-                    <input type="text" ng-model="hostUrl" class="url_input"> {{test_input}} <button class="btn" ng-click="createNewHost()">Submit</button>
-                </div>
-
-                <ul class="host_lists nav nav-stacked" ng-repeat="data in hostData">
-                    <li class="host-box">
-                        <div class="host-list-header">
-                            {{data.name}}
-                        </div>
-                        <ul>
-                            <li>
-                                {{data.responses[0].counter}}
-                            </li>
-                            <li>
-                                {{data.responses[0].statusCode}}
-                            </li>
-                            <li>
-                                {{data.responses[0].responseTime}}
-                            </li>
-                            <li>
-                                {{data.responses[0].scriptRunTime}}
-                            </li>
-                            <li>
-                                {{data.responses[0].created_at}}
-                            </li>
-                        </ul>
-
-                    </li>
-                </ul>
-
-            </div>
-            <div class="span9">
+            <div class="span9 offset2">
                 <!-- Add your site or application content here -->
               <h4 class="ping_counter"></h4>
               	<p class="news"></p>
@@ -92,20 +60,53 @@
                 <br style="clear: both">
                 <div class="row-fluid master_timeline_wrapper">
                     <div class="span4 production_div">
+                        <div class="production_line_connector">&nbsp</div>
+
                         <div class="production_latest_item">
                             <div class="production_title">
                                 <h7>{{rawDataArray[0]['name']}}</h7>
                             </div>
                             {{rawDataArray[0]['responses'].length}}
+                            {{childArray[rawDataArray[0]['name']].length}}
+
                         </div>
+                        <br style="clear: both">
+                        <ul class="latest_item_list_production" style="width: 284px">
+                            <li ng-repeat="child in childArray[rawDataArray[0]['name']] | orderBy: reverse">
+                                <div class="production_line_connector">&nbsp</div>
+
+                                <div class="latest_item_production" style="float: left">
+                                    {{child.responseTime}}
+                                </div>
+                                <br style="clear: both" />
+
+                            </li>
+                        </ul>
                     </div>
-                    <div class="span3 development_div offset1">
+
+                    <div class="span2" style="margin-right: 0 !important"></div>
+
+                    <div class="span3 development_div">
+                        <div class="development_line_connector">&nbsp</div>
                         <div class="development_latest_item">
                             <div class="development_title">
                                 <h7>{{rawDataArray[1]['name']}}</h7>
                             </div>
                             {{rawDataArray[1]['responses'].length}}
+                            {{childArray[rawDataArray[1]['name']].length}}
                         </div>
+
+
+                        <ul class="latest_item_list_development" style="width: 282px">
+                            <li ng-repeat="child in childArray[rawDataArray[1]['name']]">
+                                <div class="latest_item_development">
+                                    {{child.responseTime}}
+                                </div>
+                                <div class="development_line_connector">&nbsp</div>
+                                <br style="clear: both">
+                            </li>
+                        </ul>
+
                     </div>
                 </div>
             </div>

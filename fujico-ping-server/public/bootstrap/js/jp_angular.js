@@ -28,6 +28,7 @@ app.factory('socket', function($rootScope) {
 });
 
 app.controller('AppCtrl', function($scope, socket) {
+    var rawDataArray = [];
     var dataArray = [];
     $scope.hostData;
 
@@ -43,13 +44,23 @@ app.controller('AppCtrl', function($scope, socket) {
     });
 
     socket.on('send:toSockets', function(data) {
-        var rawDataArray = [];
+
+        $.each(data, function(key, value) {
+            if (rawDataArray[value['host']] == undefined) {
+                rawDataArray[value['host']] = []
+            }
+            console.log('raw data size ' +rawDataArray[value['host']].length)
+        });
+
+
         $.each(data, function(key, value) {
             var hostName = value['host'];
             $.each(dataArray, function(key, value) {
                 if (value['name'] == hostName) {
                     if(value['responses'].length >= 1) { value['responses'] = [] }
                     value['responses'].push(data.serverData);
+
+                    rawDataArray[hostName].push(data.serverData);
 
                     var responseTime = value['responses'][0]['responseTime'].replace('ms', '');
                     var host = $scope.formatClassName('.' + hostName + '_chart');
@@ -65,8 +76,12 @@ app.controller('AppCtrl', function($scope, socket) {
                 }
             })
         });
+        // maintenance code 609 503
         //console.log(rawDataArray);
+        //console.log(dataArray)
+        $scope.childArray = rawDataArray;
         $scope.rawDataArray = dataArray;
+
     });
 
     $scope.createNewHost = function() {

@@ -4,6 +4,7 @@
 @center_item_title: #00d100;
 
 @lime_green: #91e842;
+@light_grey_border: #e3e3e3;
 
 
 .jp_blue_grad {
@@ -73,7 +74,7 @@ body {
 }
 
 .master_timeline_wrapper {
-  margin-left: 5%;
+  margin-left: 0%;
 }
 
 .production_div, .development_div {
@@ -107,8 +108,59 @@ body {
 .production_latest_item {
   margin-right: 0px;
   width: @center_item_width;
+  float: right;
 }
 .development_latest_item {
-  margin-left: 70px;
+  margin-left: 20px;
   width: @center_item_width;
+}
+
+.latest_item_list_production {
+  list-style-type: none;
+  width: @center_item_width;
+  margin:0;
+  float:right;
+
+  li {
+    margin-top: 20px;
+
+    .latest_item_production {
+      border: 1px solid @light_grey_border;
+      min-height: 100px;
+      width: @center_item_width;
+      float: left;
+    }
+  }
+}
+
+.latest_item_list_development {
+  list-style-type: none;
+  width: @center_item_width;
+  margin: 0;
+
+  .li {
+    margin-top: 10px;
+
+    .latest_item_development {
+      border: 1px solid @light_grey_border;
+      min-height: 100px;
+      width: @center_item_width;
+      float: right;
+    }
+
+  }
+}
+
+.production_line_connector {
+  float: right;
+  border-top: 1px solid @light_grey_border;
+  width: 20px;
+  margin-top: 10px;
+}
+
+.development_line_connector {
+  float: left;
+  border-top: 1px solid @light_grey_border;
+  width: 20px;
+  margin-top: 10px;
 }
